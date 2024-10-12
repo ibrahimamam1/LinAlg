@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "../src/vector.h"
 
 bool failed = false;
@@ -30,28 +31,29 @@ void settingDimensionsTest(){
   
   std::cout << "Test 1.1 : Checking Dimensions After Creation\n";
   if(v.getDimension() != n) {
-    std::cout << "Test 1.1 Failed\n";
+    std::cout << "\tTest 1.1 Failed\n";
     failed = true;
     return;
   }
-  std::cout << "Test 1.1 Passed\n";
+  std::cout << "\tTest 1.1 Passed\n";
 }
 
 void settingComponentsWithConstructor(){
   std::cout << "Test 1.2 : Setting Componets with constructor\n";
   int n = 3;
-  VectorND<int>v(n);
-  int ar[3] = {1 , 2 , 3};
+  std::vector<int>ar(n);
+  ar = {1 , 2 , 3};
+  VectorND<int>v(n , ar);
 
   for(int i=0; i<n; i++){
     if(ar[i] != v[i]){
       std::cout << ar[i] << "!=" << v[i] <<"\n";
-      std::cout << "Test Failed\n";
+      std::cout << "\tTest 1.2 Failed\n";
       failed = true;
       return ;
     }
   }
-  std::cout <<"Test 1.2 Passed\n"; 
+  std::cout <<"\tTest 1.2 Passed\n"; 
 }
 
 
@@ -59,19 +61,20 @@ void settingComponentsWithSetter(){
   std::cout << "Test 1.3 : Setting Componets With Setter\n";
   int n = 4;
   VectorND<int>v(n);
-  int ar[4] = {1 , 2 , 3 , 4};
+  std::vector<int> ar(n);
+  ar = {1 , 2 , 3 , 4};
 
   v.setComponents(ar);
 
   for(int i=0; i<n; i++){
     if(ar[i] != v[i]){
       std::cout << ar[i] << "!=" << v[i] <<"\n";
-      std::cout << "Test Failed\n";
+      std::cout << "\tTest Failed\n";
       failed = true;
       return ;
     }
   }
-  std::cout <<"Test 1.3 Passed\n"; 
+  std::cout <<"\tTest 1.3 Passed\n"; 
 } 
 
 
