@@ -48,19 +48,38 @@ public:
   
   std::vector<T>& getComponent(int) const { return components; }
   size_t getDimension() const { return dimension; }
+  
+void scale(T x)
+{
+    for(size_t i=0; i<this->getDimension() ; i++)
+    {
+        this->components[i] *= x;
+    }
+}
 
-  /* void print() const;
-  T* dotProduct()const;
-  double computeLength() const;
-  double* computeAngles()const; //returns array containing angles for each axis
-  in the respective order void scale(double scalar); void scale(int scalar);
-  bool isUnit() const;
-  bool isZero() const;
 
-  static Vector add(Vector , Vector);
-  static double dotProduct(Vector , Vector);
-  static double angleBetween(Vector , Vector);
-  */
+  double length();
+  void add(VectorND<T>v);
+  void transform();
+  void rotateX();
+  void rotateY();
+  double angleWithVec(VectorND<T>v);
+  bool isUnit();
+  bool isZero();
+
+  void print() const;
+  std::vector<double> angleWithAxis() const; //returns array containing angles for each axis
+
+  //for 2D and 3D vectors
+  double angleWithX();
+  double anglewithY();
+  double anglewithZ();
+
+  static double angleBetweenVec(VectorND<T>v1 , VectorND<T>v2);
+  static VectorND<T> addVec(VectorND<T>v1 , VectorND<T>v2);
+  double dotProduct(VectorND<T>v) const;
+  static VectorND<T> transformVec(VectorND<T>v); 
+  
 };
 
 #endif

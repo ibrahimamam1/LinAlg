@@ -1,7 +1,8 @@
 #include<cmath>
 #include <math.h>
-#include"vector.hpp"
+#include"vector.h"
 
+template<typename T>
 void Vector::print() const
 {
     std::cout << "(";
@@ -22,38 +23,6 @@ double Vector::dotProduct() const
 
     return result;
 
-}
-
-double Vector::computeLength() const
-{
-    return sqrt(this->dotProduct());
-}
-double* Vector::computeAngles()const
-{
-    double* result = new double(this->getDimension());
-    int length = this->computeLength();
-
-    for(size_t i=0; i < this->getDimension(); i++)
-    {
-        result[i] = acos(this->getComponent(i) / length);
-    } 
-
-    return result;
-}
-
-void Vector::scale(double scalar)
-{
-    for(size_t i=0; i<this->getDimension() ; i++)
-    {
-        this->components[i] *= scalar;
-    }
-}
-void Vector::scale(int scalar)
-{
-    for(size_t i=0; i<this->getDimension() ; i++)
-    {
-        this->components[i] *= scalar;
-    }
 }
 
 bool Vector::isUnit() const
