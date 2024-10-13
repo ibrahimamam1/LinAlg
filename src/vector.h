@@ -1,7 +1,9 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <cmath>
 #include <cstddef>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -58,26 +60,83 @@ void scale(T x)
 }
 
 
-  double length();
-  void add(VectorND<T>v);
-  void transform();
-  void rotateX();
-  void rotateY();
-  double angleWithVec(VectorND<T>v);
-  bool isUnit();
-  bool isZero();
+  double length(){
+    long long sum_of_squares = 0;
 
-  void print() const;
-  std::vector<double> angleWithAxis() const; //returns array containing angles for each axis
+    for(size_t i=0; i<getDimension(); i++){
+      sum_of_squares += components[i] * components[i];
+    }
+
+    return sqrt(sum_of_squares);
+  }
+
+  //add the components of vector v to this vector object
+  void add(VectorND<T>v) {
+    
+    if(dimension != v.getDimension()){
+      std::invalid_argument("Dimensions Mismatch , can only add vectors of same dimension\n");
+    }
+
+    for(int i=0; i<dimension; i++){
+      components[i] += v[i];
+    }
+  }
+  
+  //computes the dot product of this object with vector v
+  double dotProduct(VectorND<T>v) const{
+    if(dimension != v.getDimension()) {
+      std::invalid_argument("Dimension Mismatch , can only find dot product if vectors have same Dimensions\n");
+    }
+
+    double result = 0;
+
+    for(int i=0; i<dimension; i++){
+      result += components[i]*v[i];
+    }
+
+    return result;
+  }
+  //TODO: Transform Using a matrix
+  //void transform();
+  double angleWithVec(VectorND<T>v){
+    double dp = this->dotProduct(v);
+    double length_u = this->length();
+    double length_v = v.length();
+
+    double angle = acos( dp / (length_u * length_v) );
+
+    return angle;
+  }
+  bool isUnit() {
+    return this->length() == 1;
+  }
+  bool isZero() {
+    return this->length() == 0;
+  }
+
+  void print() const{
+    std::cout << "[ ";
+
+    for(int i=0; i<dimension; i++){
+      std::cout << v[i] << " ";
+    }
+
+    std::cout << "]\n";
+  }
 
   //for 2D and 3D vectors
-  double angleWithX();
-  double anglewithY();
-  double anglewithZ();
+  virtual double angleWithX();
+  virtual double anglewithY();
+  virtual double anglewithZ();
+  virtual std::vector<double> angleWithAxis() const; //returns array containing angles for each axis
+  virtual void rotateX();
+  virtual void rotateY();
+  virtual void rotateZ();
 
+  //for vector.cpp
   static double angleBetweenVec(VectorND<T>v1 , VectorND<T>v2);
   static VectorND<T> addVec(VectorND<T>v1 , VectorND<T>v2);
-  double dotProduct(VectorND<T>v) const;
+  static double dotProduct(VectorND<T>v1 , VectorND<T>v2) const;
   static VectorND<T> transformVec(VectorND<T>v); 
   
 };
