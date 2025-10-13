@@ -11,31 +11,15 @@
 
 // N-Dimensional Vector
 template <typename T> class VectorND {
-  size_t dimension;           
+  size_t dimension;
   std::vector<T> components;
 
 public:
   VectorND() : dimension(1), components(1) {}
-
   VectorND(size_t _dimension) : dimension(_dimension), components(dimension) {}
-  
-  VectorND(size_t _dimension, std::vector<T> &_comps)
-      : dimension(_dimension), components(dimension) {
-    if (_comps.size() > dimension) {
-      throw std::invalid_argument(
-          "VectorND : cannot assign components of length : " +
-          std::to_string(_comps.size()) +
-          " to Vector of dimension : " + std::to_string(dimension));
-    }
-    for (size_t i = 0; i < dimension; i++) {
-      components[i] = _comps[i];
-    }
-  }
-
-  VectorND(VectorND<T> &v) : dimension(v.dimension), components(v.components) {}
-  
   VectorND(std::vector<T> vec) : dimension(vec.size()), components(vec) {}
-  
+  VectorND(VectorND<T> &v) : dimension(v.dimension), components(v.components) {}
+
   VectorND<T> operator=(VectorND<T> &v) {
     size_t dim = v.dimension;
     std::vector<T> comps = v.components;
@@ -43,37 +27,32 @@ public:
     return VectorND<T>(dim, comps);
   }
 
-  VectorND<T> operator=(std::vector<T>v) {
-    return VectorND<T>(v.size(), v);
-  }
+  VectorND<T> operator=(std::vector<T> v) { return VectorND<T>(v.size(), v); }
 
   const T &operator[](size_t i) const { return components[i]; }
 
   size_t getDimension() const { return dimension; }
-
   std::vector<T> getComponents() const { return components; }
 
- void setComponents(std::vector<T> &_comps) {
-    if (_comps.size() > dimension) {
-      throw std::invalid_argument(
-          "Cannot assign components of size : " +
-          std::to_string(_comps.size()) +
-          " to Vector of dimension : " + std::to_string(dimension));
-    }
-
-    for (size_t i = 0; i < dimension; i++) {
+  void setComponents(std::vector<T> &_comps) {
+    for (size_t i = 0; i < _comps.size() && i < dimension; i++) {
       components[i] = _comps[i];
     }
+    size_t start = 0, end = 0;
+    if (_comps.size() < dimension) {
+      for (size_t i = _comps.size(); i < dimension; i++) {
+        components[i] = 0;
+      }
+    }
   }
-
 
   void scale(T x) {
     for (size_t i = 0; i < this->getDimension(); i++) {
       this->components[i] *= x;
     }
   }
-  
-  //return the length of the vector
+
+  // return the length of the vector
   double length() {
     long long sum_of_squares = 0;
 
@@ -112,8 +91,9 @@ public:
 
     return result;
   }
-  
-  // returns the angle the calling object make with the vector passes as argument in degrees
+
+  // returns the angle the calling object make with the vector passes as
+  // argument in degrees
   double angleWithVec(VectorND<T> v) {
     double dp = this->dotProduct(v);
     double length_u = this->length();
@@ -123,14 +103,14 @@ public:
 
     return angle;
   }
-  
-  //returns true if object is a unit vector
+
+  // returns true if object is a unit vector
   bool isUnit() { return this->length() == 1; }
 
-  //return true if object is a zero vector
+  // return true if object is a zero vector
   bool isZero() { return this->length() == 0; }
-  
-  //prints component of the vector in human readable form
+
+  // prints component of the vector in human readable form
   void print() const {
     std::cout << "[ ";
 
@@ -140,10 +120,9 @@ public:
 
     std::cout << "]\n";
   }
+};
 
- };
-
-//child class of VectorNd for 2D vectors
+// child class of VectorNd for 2D vectors
 template <typename T> class Vector2D : public VectorND<T> {
 public:
   Vector2D() : VectorND<T>(2) {}
@@ -155,24 +134,24 @@ public:
   Vector2D(std::vector<T> &_comps) : VectorND<T>(_comps) {}
 
   Vector2D(Vector2D<T> &v) : VectorND<T>(v) {}
-  
-  //returns the angle the vector makes with the x axis
+
+  // returns the angle the vector makes with the x axis
   double angleWithX() {
-    Vector2D i(1,0);
+    Vector2D i(1, 0);
     double dp = this->dotProduct(i);
 
-    return arccos(dp/this->length());
+    return arccos(dp / this->length());
   }
 
   double anglewithY() {
-    Vector2D j(0,1);
+    Vector2D j(0, 1);
     double dp = this->dotProduct(j);
 
-    return arccos(dp/this->length());
+    return arccos(dp / this->length());
   }
 };
 
-//child class of Vector3D for 3D vectors
+// child class of Vector3D for 3D vectors
 template <typename T> class Vector3D : public VectorND<T> {
 public:
   Vector3D() : VectorND<T>(3) {}
@@ -185,27 +164,27 @@ public:
   Vector3D(std::vector<T> &_comps) : VectorND<T>(_comps) {}
 
   Vector3D(Vector3D<T> &v) : VectorND<T>(v) {}
-  
-  //returns the angle the vector makes with the x axis
+
+  // returns the angle the vector makes with the x axis
   double angleWithX() {
-    Vector3D i(1,0,0);
+    Vector3D i(1, 0, 0);
     double dp = this->dotProduct(i);
 
-    return arccos(dp/this->length());
+    return arccos(dp / this->length());
   }
 
   double anglewithY() {
-    Vector3D j(0,1,0);
+    Vector3D j(0, 1, 0);
     double dp = this->dotProduct(j);
 
-    return arccos(dp/this->length());
+    return arccos(dp / this->length());
   }
-  
+
   double anglewithZ() {
-    Vector3D k(0,0,1);
+    Vector3D k(0, 0, 1);
     double dp = this->dotProduct(k);
 
-    return arccos(dp/this->length());
+    return arccos(dp / this->length());
   }
 };
 #endif
