@@ -116,3 +116,60 @@ TEST_F(OperationsTest, DifferentTypeDotProduct){
   double dp = u.dotProduct(w);
   EXPECT_DOUBLE_EQ(dp, 32.0); // 1*4.0 + 2*5.0 + 3*6.0 = 32.0
 }
+
+TEST_F(OperationsTest, DotProductWithItself){
+  double dp = u.dotProduct(u);
+  EXPECT_EQ(dp, 14); // 1*1 + 2*2 + 3*3 = 14
+}
+
+TEST_F(OperationsTest, DotProductWithZeroVector){
+  VectorND<int> zero({0, 0, 0});
+  double dp = u.dotProduct(zero);
+  EXPECT_EQ(dp, 0);
+}
+
+TEST_F(OperationsTest, AngleBetweenOrthogonalVectors){
+  VectorND<int> x_axis({1, 0, 0});
+  VectorND<int> y_axis({0, 1, 0});
+  double angle = x_axis.angleWithVec(y_axis);
+  EXPECT_NEAR(angle, M_PI / 2, 0.0001); // 90 degrees in radians
+}
+
+TEST_F(OperationsTest, AngleBetweenSameDirectionVectors){
+  VectorND<int> a({1, 1, 1});
+  VectorND<int> b({2, 2, 2});
+  double angle = a.angleWithVec(b);
+  EXPECT_NEAR(angle, 0.0, 0.0001); // 0 degrees in radians
+}
+
+TEST_F(OperationsTest, AngleBetweenOppositeDirectionVectors){
+  VectorND<int> a({1, 0, 0});
+  VectorND<int> b({-1, 0, 0});
+  double angle = a.angleWithVec(b);
+  EXPECT_NEAR(angle, M_PI, 0.0001); // 180 degrees in radians
+}
+
+TEST_F(OperationsTest, IsUnitVectorFasle){
+  bool isUnit = u.isUnit();
+  EXPECT_FALSE(isUnit);
+}
+
+TEST_F(OperationsTest, IsUnitVectorTrue){
+  VectorND<double> unit({1.0/std::sqrt(3), 1.0/std::sqrt(3), 1.0/std::sqrt(3)});
+  bool isUnit = unit.isUnit();
+  EXPECT_TRUE(isUnit);
+}
+
+TEST_F(OperationsTest, IsZeroVectorTrue){
+  VectorND<int> zero({0, 0, 0});
+  bool isZero = zero.isZero();
+  EXPECT_TRUE(isZero);
+}
+
+TEST_F(OperationsTest, IsZeroVectorFalse){
+  bool isZero = u.isZero();
+  EXPECT_FALSE(isZero);
+}
+
+
+

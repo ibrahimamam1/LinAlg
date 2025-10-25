@@ -20,16 +20,21 @@ public:
   VectorND(std::vector<T> vec) : dimension(vec.size()), components(vec) {}
   VectorND(VectorND<T> &v) : dimension(v.dimension), components(v.components) {}
 
-  VectorND<T> operator=(VectorND<T> &v) {
-    size_t dim = v.dimension;
-    std::vector<T> comps = v.components;
-
-    return VectorND<T>(dim, comps);
+  void operator=(VectorND<T> &v) {
+    this->dim = v.dimension;
+    this->components = v.components;
   }
 
-  VectorND<T> operator=(std::vector<T> v) { return VectorND<T>(v.size(), v); }
+  void operator=(std::vector<T> v) {
+    this.dimension = v.size();
+    this.components = v;
+  }
 
-  const T &operator[](size_t i) const { return components[i]; }
+  const T &operator[](size_t i) const {
+    if( i >= dimension || i < 0 ) {
+      throw std::out_of_range("Index out of range\n");
+    }
+    return components[i]; }
 
   size_t getDimension() const { return dimension; }
   std::vector<T> getComponents() const { return components; }
@@ -38,7 +43,6 @@ public:
     for (size_t i = 0; i < _comps.size() && i < dimension; i++) {
       components[i] = _comps[i];
     }
-    size_t start = 0, end = 0;
     if (_comps.size() < dimension) {
       for (size_t i = _comps.size(); i < dimension; i++) {
         components[i] = 0;
@@ -57,7 +61,7 @@ public:
 
   // return the length of the vector
   double length() {
-    long long sum_of_squares = 0;
+    double sum_of_squares = 0;
 
     for (size_t i = 0; i < getDimension(); i++) {
       sum_of_squares += components[i] * components[i];
@@ -70,7 +74,7 @@ public:
   template <typename U>
   auto add(VectorND<U> v) {
     if (dimension != v.getDimension()) {
-      std::invalid_argument(
+     throw std::invalid_argument(
           "Dimensions Mismatch , can only add vectors of same dimension\n");
     }
 
@@ -82,12 +86,30 @@ public:
     }
     return VectorND<Type>(new_comps);
   }
+ 
+  // subtract the components of vector v from this vector object
+  template <typename U>
+  auto subtract(VectorND<U> v) {
+    if (dimension != v.getDimension()) {
+      throw std::invalid_argument(
+          "Dimensions Mismatch , can only subtract vectors of same dimension\n");
+    }
+
+    using Type = decltype(components[0] - v[0]);
+    std::vector<Type> new_comps(this->dimension);
+    
+    for (int i = 0; i < dimension; i++) {
+      new_comps[i] = components[i] - v[i];
+    }
+    return VectorND<Type>(new_comps);
+  }
+
 
   // returns the dot product of this object with vector v
   template <typename U>
   double dotProduct(const VectorND<U> v) {
     if (dimension != v.getDimension()) {
-      std::invalid_argument("Dimension Mismatch , can only find dot product if "
+      throw std::invalid_argument("Dimension Mismatch , can only find dot product if "
                             "vectors have same Dimensions\n");
     }
 
@@ -101,18 +123,24 @@ public:
   }
 
   // returns the angle the calling object make with the vector passed as in degrees
-  double angleWithVec(VectorND<T> v) {
+  template <typename U>
+  double angleWithVec(VectorND<U> v) {
     double dp = this->dotProduct(v);
     double length_u = this->length();
     double length_v = v.length();
 
-    double angle = acos(dp / (length_u * length_v));
+    double cosine = dp / (length_u * length_v);
+    cosine = std::max(-1.0, std::min(1.0, cosine));
+    double angle = acos(cosine);
 
     return angle;
   }
 
   // returns true if object is a unit vector
-  bool isUnit() { return this->length() == 1; }
+  bool isUnit() {
+   double length = this->length();
+   return std::abs(length - 1.0) < 1e-6;
+  }
 
   // return true if object is a zero vector
   bool isZero() { return this->length() == 0; }
@@ -145,16 +173,12 @@ public:
   // returns the angle the vector makes with the x axis
   double angleWithX() {
     Vector2D i(1, 0);
-    double dp = this->dotProduct(i);
-
-    return arccos(dp / this->length());
+    return this->angleWithVec(i);
   }
 
   double anglewithY() {
     Vector2D j(0, 1);
-    double dp = this->dotProduct(j);
-
-    return arccos(dp / this->length());
+    return this->angleWithVec(j);
   }
 };
 
@@ -175,23 +199,17 @@ public:
   // returns the angle the vector makes with the x axis
   double angleWithX() {
     Vector3D i(1, 0, 0);
-    double dp = this->dotProduct(i);
-
-    return arccos(dp / this->length());
+    return this->angleWithVec(i);
   }
 
   double anglewithY() {
     Vector3D j(0, 1, 0);
-    double dp = this->dotProduct(j);
-
-    return arccos(dp / this->length());
+    return this->angleWithVec(j);
   }
 
   double anglewithZ() {
     Vector3D k(0, 0, 1);
-    double dp = this->dotProduct(k);
-
-    return arccos(dp / this->length());
+    return this->angleWithVec(k);
   }
 };
 #endif
