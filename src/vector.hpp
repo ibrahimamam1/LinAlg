@@ -45,11 +45,14 @@ public:
       }
     }
   }
-
-  void scale(T x) {
+  template <typename U>
+  auto scale(U x) {
+    using ResultType = decltype(components[0] * x);
+    std::vector<ResultType> new_comps(this->dimension);
     for (size_t i = 0; i < this->getDimension(); i++) {
-      this->components[i] *= x;
+       new_comps[i] = this->components[i] * x;
     }
+    return VectorND<ResultType>(new_comps);
   }
 
   // return the length of the vector
@@ -64,20 +67,25 @@ public:
   }
 
   // add the components of vector v to this vector object
-  void add(VectorND<T> v) {
-
+  template <typename U>
+  auto add(VectorND<U> v) {
     if (dimension != v.getDimension()) {
       std::invalid_argument(
           "Dimensions Mismatch , can only add vectors of same dimension\n");
     }
 
+    using Type = decltype(components[0] + v[0]);
+    std::vector<Type> new_comps(this->dimension);
+    
     for (int i = 0; i < dimension; i++) {
-      components[i] += v[i];
+      new_comps[i] = components[i] + v[i];
     }
+    return VectorND<Type>(new_comps);
   }
 
   // returns the dot product of this object with vector v
-  double dotProduct(const VectorND<T> v) {
+  template <typename U>
+  double dotProduct(const VectorND<U> v) {
     if (dimension != v.getDimension()) {
       std::invalid_argument("Dimension Mismatch , can only find dot product if "
                             "vectors have same Dimensions\n");
@@ -92,8 +100,7 @@ public:
     return result;
   }
 
-  // returns the angle the calling object make with the vector passes as
-  // argument in degrees
+  // returns the angle the calling object make with the vector passed as in degrees
   double angleWithVec(VectorND<T> v) {
     double dp = this->dotProduct(v);
     double length_u = this->length();
