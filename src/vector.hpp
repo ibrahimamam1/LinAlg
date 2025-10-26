@@ -20,14 +20,14 @@ public:
   VectorND(std::vector<T> vec) : dimension(vec.size()), components(vec) {}
   VectorND(VectorND<T> &v) : dimension(v.dimension), components(v.components) {}
 
-  void operator=(VectorND<T> &v) {
-    this->dim = v.dimension;
+  void operator=(const VectorND<T> &v) {
+    this->dimension = v.dimension;
     this->components = v.components;
   }
 
-  void operator=(std::vector<T> v) {
-    this.dimension = v.size();
-    this.components = v;
+  void operator=(const std::vector<T> &v) {
+    this->dimension = v.size();
+    this->components = v;
   }
 
   const T &operator[](size_t i) const {
@@ -39,7 +39,7 @@ public:
   size_t getDimension() const { return dimension; }
   std::vector<T> getComponents() const { return components; }
 
-  void setComponents(std::vector<T> &_comps) {
+  void setComponents(const std::vector<T> &_comps) {
     for (size_t i = 0; i < _comps.size() && i < dimension; i++) {
       components[i] = _comps[i];
     }
@@ -50,7 +50,7 @@ public:
     }
   }
   template <typename U>
-  auto scale(U x) {
+  auto scale(const U x) {
     using ResultType = decltype(components[0] * x);
     std::vector<ResultType> new_comps(this->dimension);
     for (size_t i = 0; i < this->getDimension(); i++) {
@@ -60,7 +60,7 @@ public:
   }
 
   // return the length of the vector
-  double length() {
+  double length() const{
     double sum_of_squares = 0;
 
     for (size_t i = 0; i < getDimension(); i++) {
@@ -69,10 +69,10 @@ public:
 
     return sqrt(sum_of_squares);
   }
-
+  
   // add the components of vector v to this vector object
   template <typename U>
-  auto add(VectorND<U> v) {
+  auto operator +(const VectorND<U>& v) {
     if (dimension != v.getDimension()) {
      throw std::invalid_argument(
           "Dimensions Mismatch , can only add vectors of same dimension\n");
@@ -81,7 +81,7 @@ public:
     using Type = decltype(components[0] + v[0]);
     std::vector<Type> new_comps(this->dimension);
     
-    for (int i = 0; i < dimension; i++) {
+    for (size_t i = 0; i < dimension; i++) {
       new_comps[i] = components[i] + v[i];
     }
     return VectorND<Type>(new_comps);
@@ -89,7 +89,66 @@ public:
  
   // subtract the components of vector v from this vector object
   template <typename U>
-  auto subtract(VectorND<U> v) {
+  auto operator -(const VectorND<U>& v) {
+    if (dimension != v.getDimension()) {
+     throw std::invalid_argument(
+          "Dimensions Mismatch , can only subtract vectors of same dimension\n");
+    }
+
+    using Type = decltype(components[0] + v[0]);
+    std::vector<Type> new_comps(this->dimension);
+    
+    for (size_t i = 0; i < dimension; i++) {
+      new_comps[i] = components[i] - v[i];
+    }
+    return VectorND<Type>(new_comps);
+  }
+  
+  template <typename U>
+  VectorND<T>& operator +=(const VectorND<U> &v) {
+    if (dimension != v.getDimension()) {
+     throw std::invalid_argument(
+          "Dimensions Mismatch , can only add vectors of same dimension\n");
+    }
+
+    for (size_t i = 0; i < dimension; i++) {
+      components[i] += v[i];
+    }
+    return *this;
+  }
+
+  template <typename U>
+  VectorND<T>& operator -=(const VectorND<U> &v) {
+    if (dimension != v.getDimension()) {
+     throw std::invalid_argument(
+          "Dimensions Mismatch , can only subtract vectors of same dimension\n");
+    }
+
+    for (size_t i = 0; i < dimension; i++) {
+      components[i] -= v[i];
+    }
+    return *this;
+  }
+  
+  template <typename U>
+  auto add(const VectorND<U>& v) {
+    if (dimension != v.getDimension()) {
+     throw std::invalid_argument(
+          "Dimensions Mismatch , can only add vectors of same dimension\n");
+    }
+
+    using Type = decltype(components[0] + v[0]);
+    std::vector<Type> new_comps(this->dimension);
+    
+    for (size_t i = 0; i < dimension; i++) {
+      new_comps[i] = components[i] + v[i];
+    }
+    return VectorND<Type>(new_comps);
+  }
+ 
+  // subtract the components of vector v from this vector object
+  template <typename U>
+  auto subtract(const VectorND<U>& v) {
     if (dimension != v.getDimension()) {
       throw std::invalid_argument(
           "Dimensions Mismatch , can only subtract vectors of same dimension\n");
@@ -98,7 +157,7 @@ public:
     using Type = decltype(components[0] - v[0]);
     std::vector<Type> new_comps(this->dimension);
     
-    for (int i = 0; i < dimension; i++) {
+    for (size_t i = 0; i < dimension; i++) {
       new_comps[i] = components[i] - v[i];
     }
     return VectorND<Type>(new_comps);
@@ -107,7 +166,7 @@ public:
 
   // returns the dot product of this object with vector v
   template <typename U>
-  double dotProduct(const VectorND<U> v) {
+  double dotProduct(const VectorND<U> &v) {
     if (dimension != v.getDimension()) {
       throw std::invalid_argument("Dimension Mismatch , can only find dot product if "
                             "vectors have same Dimensions\n");
@@ -124,7 +183,7 @@ public:
 
   // returns the angle the calling object make with the vector passed as in degrees
   template <typename U>
-  double angleWithVec(VectorND<U> v) {
+  double angleWithVec(const VectorND<U> &v) {
     double dp = this->dotProduct(v);
     double length_u = this->length();
     double length_v = v.length();
@@ -149,7 +208,7 @@ public:
   void print() const {
     std::cout << "[ ";
 
-    for (int i = 0; i < dimension; i++) {
+    for (size_t i = 0; i < dimension; i++) {
       std::cout << components[i] << " ";
     }
 

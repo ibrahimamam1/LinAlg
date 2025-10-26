@@ -171,5 +171,32 @@ TEST_F(OperationsTest, IsZeroVectorFalse){
   EXPECT_FALSE(isZero);
 }
 
+TEST_F(OperationsTest, PlusOperator){
+  auto sum = u + v;
+  EXPECT_EQ(sum[0], 5); // 1 + 4
+  EXPECT_EQ(sum[1], 7); // 2 + 5
+  EXPECT_EQ(sum[2], 9); // 3 + 6
+}
 
+TEST_F(OperationsTest, MinusOperator){
+  auto diff = v - u;
+  EXPECT_EQ(diff[0], 3); // 4 - 1
+  EXPECT_EQ(diff[1], 3); // 5 - 2
+  EXPECT_EQ(diff[2], 3); // 6 - 3
+}
 
+TEST_F(OperationsTest, PlusEqualsOperator){
+  VectorND<int> a = u;
+  a += v;
+  EXPECT_EQ(a[0], 5); // 1 + 4
+  EXPECT_EQ(a[1], 7); // 2 + 5
+  EXPECT_EQ(a[2], 9); // 3 + 6
+}
+
+TEST_F(OperationsTest, MinusEqualsOperator){
+  VectorND<int> a = v;
+  a -= u;
+  EXPECT_EQ(a[0], 3); // 4 - 1
+  EXPECT_EQ(a[1], 3); // 5 - 2
+  EXPECT_EQ(a[2], 3); // 6 - 3
+}
