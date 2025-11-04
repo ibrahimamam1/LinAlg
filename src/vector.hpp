@@ -221,8 +221,8 @@ template <typename T> class Vector2D : public VectorND<T> {
 public:
   Vector2D() : VectorND<T>(2) {}
   Vector2D(int &x, int &y) : VectorND<T>(2) {
-    this.components[0] = x;
-    this.components[1] = y;
+    this->components[0] = x;
+    this->components[1] = y;
   }
 
   Vector2D(std::vector<T> &_comps) : VectorND<T>(_comps) {}
@@ -246,9 +246,9 @@ template <typename T> class Vector3D : public VectorND<T> {
 public:
   Vector3D() : VectorND<T>(3) {}
   Vector3D(int &x, int &y, int &z) : VectorND<T>(3) {
-    this.components[0] = x;
-    this.components[1] = y;
-    this.components[2] = z;
+    this->components[0] = x;
+    this->components[1] = y;
+    this->components[2] = z;
   }
 
   Vector3D(std::vector<T> &_comps) : VectorND<T>(_comps) {}

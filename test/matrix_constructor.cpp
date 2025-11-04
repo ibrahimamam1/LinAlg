@@ -4,7 +4,12 @@
 TEST(MatrixConstructorTest, ConstructFromSize){
   Matrix<double> mat(3,4);
   EXPECT_EQ(mat.getRows(), 3);
-  EXPECT_EQ(mat.getColumns(), 4);
+  EXPECT_EQ(mat.getCols(), 4);
+  for(size_t i = 0; i < 3; ++i){
+    for(size_t j = 0; j < 4; ++j){
+      EXPECT_EQ(mat[i][j], 0.0);
+    }
+  }
 }
 
 TEST(MatrixConstructorTest, ConstructFrom2DVector){
@@ -14,7 +19,7 @@ TEST(MatrixConstructorTest, ConstructFrom2DVector){
   };
   Matrix<double> mat(values);
   EXPECT_EQ(mat.getRows(), 2);
-  EXPECT_EQ(mat.getColumns(), 3);
+  EXPECT_EQ(mat.getCols(), 3);
 }
 
 TEST(MatrixConstructorTest, CopyConstructor){
@@ -25,7 +30,7 @@ TEST(MatrixConstructorTest, CopyConstructor){
   Matrix<double> mat1(values);
   Matrix<double> mat2 = mat1; // Copy constructor
   EXPECT_EQ(mat2.getRows(), 2);
-  EXPECT_EQ(mat2.getColumns(), 2);
+  EXPECT_EQ(mat2.getCols(), 2);
 }
 
 TEST(MatrixConstructorTest, AssignmentOperator){
@@ -37,5 +42,5 @@ TEST(MatrixConstructorTest, AssignmentOperator){
   Matrix<double> mat2(2,3);
   mat2 = mat1; // Assignment operator
   EXPECT_EQ(mat2.getRows(), 2);
-  EXPECT_EQ(mat2.getColumns(), 3);
+  EXPECT_EQ(mat2.getCols(), 3);
 }
