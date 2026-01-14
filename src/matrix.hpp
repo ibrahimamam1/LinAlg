@@ -1,14 +1,17 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 #include "vector.hpp"
+#include <vector>
 
 template <typename T> class Matrix {
 private:
-  size_t m; // Number of Rows
-  size_t n; // Number of Columns
+  size_t _m; // Number of Rows
+  size_t _n; // Number of Columns
   std::vector<std::vector<T>> elements;
-  std::unique_ptr<Matrix<T>> L = nullptr; // Lower triangular matrix for LU factorization
-  std::unique_ptr<Matrix<T>> U = nullptr; // Upper triangular matrix for LU factorization
+  std::unique_ptr<Matrix<T>> L =
+      nullptr; // Lower triangular matrix for LU factorization
+  std::unique_ptr<Matrix<T>> U =
+      nullptr; // Upper triangular matrix for LU factorization
   mutable bool luFactorized = false;
   mutable double determinant = 0.0;
   mutable bool determinantComputed = false;
@@ -20,116 +23,84 @@ private:
 public:
   Matrix() = delete;
 
-  Matrix(size_t rows, size_t cols) : 
-    m(rows),
-    n(cols),
-    elements(rows, std::vector<T>(cols, 0)){}
+  Matrix<T>(size_t m, size_t n)
+      : _m(m), _n(n), elements(m, std::vector<T>(n, 0)) {}
 
-  Matrix(const std::vector<std::vector<double>>& values) : 
-    m(values.size()), 
-    n(values[0].size()),
-    elements(values){}
+  Matrix<T>(const std::vector<std::vector<T>> &values)
+      : _m(values.size()), _n(values[0].size()), elements(values) {}
 
-  Matrix(const Matrix<T> &) = default;
-  Matrix<T>& operator=(const Matrix<T> &) = default;
-  
-  Matrix<T>& operator=(const std::vector<std::vector<T>> &values){
-    this->m = values.size();
-    this->n = values[0].size();
+  Matrix<T>(const Matrix<T> &) = default;
+  Matrix<T> &operator=(const Matrix<T> &) = default;
+
+  Matrix<T> &operator=(const std::vector<std::vector<T>> &values) {
+    this->_m = values.size();
+    this->_n = values[0].size();
     this->elements = values;
     return *this;
   }
 
-  const std::vector<T>& operator[](size_t i) const {
-    if (i >= m) {
+  void setElements(const std::vector<std::vector<T>>& values){
+    this->elements = values;
+  }
+
+  std::vector<T> &operator[](size_t i) {
+    if (i >= _m) {
+      throw std::out_of_range("Index out of range\n");
+    }
+    return elements[i];
+  }
+ 
+  const std::vector<T> &operator[](size_t i) const {
+    if (i >= _m) {
       throw std::out_of_range("Index out of range\n");
     }
     return elements[i];
   }
 
-  size_t getRows() const {
-    return elements.size();
-  }
-
-  size_t getCols() const {
-    return elements[0].size();
-  }
+  size_t getRowDim() const { return elements.size(); }
+  size_t getColDim() const { return elements[0].size(); }
   
-  
-  Matrix<T>& factoriseLU(Matrix<T>& U) {
-      if (luFactorized) {
-          U = *this->U;
-          return *this->L;
-      }
-      
-      L = std::make_unique<Matrix<T>>(m, n);
-      this->U = std::make_unique<Matrix<T>>(*this); // Copy current matrix to U
-      
-      // Initialize L as identity
-      for(size_t i = 0; i < m; ++i) {
-          for(size_t j = 0; j < n; ++j) {
-              L->elements[i][j] = (i == j) ? 1 : 0;
-          }
-      }
-      
-      // Perform LU decomposition (Doolittle algorithm)
-      for(size_t k = 0; k < std::min(m, n); ++k) {
-          if(this->U->elements[k][k] == 0) {
-              throw std::runtime_error("Matrix has a zero pivot, cannot perform LU factorization\n");
-          }
-          
-          // For each row below the pivot
-          for(size_t i = k + 1; i < m; ++i) {
-              // Calculate multiplier
-              T factor = this->U->elements[i][k] / this->U->elements[k][k];
-              L->elements[i][k] = factor;
-              
-              // Eliminate column k in row i
-              for(size_t j = k; j < n; ++j) {
-                  this->U->elements[i][j] -= factor * this->U->elements[k][j];
-              }
-          }
-      }
-      
-      luFactorized = true;
-      U = *this->U;  // Copy result to output parameter
-      return *L;
-  }
+  //TODO: overloaded +, - , == ,and * operators
+  //===========MARK: UNTESTED LAND STARTS HERE===============
+/*  Matrix<T> &factoriseLU(Matrix<T> &U) {
 
-  bool isInvertible(){
-    if(determinantComputed){
+ }*/
+
+  bool isInvertible() {
+    if (determinantComputed) {
       return determinant != 0.0;
     }
-    determinant = det();
+    //determinant = det();
     determinantComputed = true;
-    return determinant != 0.0;  
+    return determinant != 0.0;
   }
 
-  double det(){
-    if(determinantComputed){
+  /*double det() {
+    if (determinantComputed) {
       return determinant;
     }
-    if(m != n){
-      throw std::invalid_argument("Determinant only defined for square matrices");
+    if (m != n) {
+      throw std::invalid_argument(
+          "Determinant only defined for square matrices");
     }
     Matrix<T> U(m, n);
     factoriseLU(U);
     double detValue = 1.0;
-    for(size_t i = 0; i < n; ++i){
+    for (size_t i = 0; i < n; ++i) {
       detValue *= U[i][i];
     }
     determinant = detValue;
     determinantComputed = true;
     return determinant;
   }
+*/
+  // Matrix transpose();
+  // Matrix inverse();
+  // Matrix scale(double);
 
-  //Matrix transpose();
-  //Matrix inverse();
-  //Matrix scale(double);
-
-  //template <typename V> VectorND<V> transform(VectorND<V> x);
-  //size_t rank();
-  //void print();
+  // template <typename V> VectorND<V> transform(VectorND<V> x);
+  // size_t rank();
+  // void print();
 
   // std::vector<std::vector<T>> columnSpace();
   // std::vector<std::vector<T>> rowSpace();
@@ -138,11 +109,11 @@ public:
   // std::vector<std::vector<T>> to2DVector() const;
   // std::vector<T> to1DVector() const;
 
-  //std::vector<std::vector<T>> eigenVectors(std::vector<T>& eigenValues);
+  // std::vector<std::vector<T>> eigenVectors(std::vector<T>& eigenValues);
 
-  //static Matrix<T> add(Matrix<T>, Matrix<T>);
-  //static Matrix<T> subract(Matrix<T>, Matrix<T>);
-  //static Matrix<T> multiply(Matrix<T>, Matrix<T>);
+  // static Matrix<T> add(Matrix<T>, Matrix<T>);
+  // static Matrix<T> subract(Matrix<T>, Matrix<T>);
+  // static Matrix<T> multiply(Matrix<T>, Matrix<T>);
 };
 
 #endif
