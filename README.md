@@ -23,7 +23,6 @@
 - [API Reference](#api-reference)
   - [`VectorND<T>` / `Vector2D<T>` / `Vector3D<T>`](#vectorndt--vector2dt--vector3dt)
   - [`Matrix<T>`](#matrixt)
-- [License](#license)
 
 ---
 
@@ -399,6 +398,3 @@ std::cout << "\n";
 
 ---
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
