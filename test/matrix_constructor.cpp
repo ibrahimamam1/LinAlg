@@ -54,7 +54,7 @@ TEST(MatrixConstructorTest, AssignmentOperator){
   mat2 = mat1; // Assignment operator
  
   EXPECT_EQ(mat2.getRowDim(), 2);
-  EXPECT_EQ(mat2.getColDim(), 2);
+  EXPECT_EQ(mat2.getColDim(), 3);
   for(size_t i=0; i<mat2.getRowDim(); i++){
     for(size_t j=0; j<mat2.getColDim(); j++){
       EXPECT_EQ(mat2[i][j], mat1[i][j]);

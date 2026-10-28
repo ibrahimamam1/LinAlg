@@ -23,6 +23,7 @@ add_test(NAME VectorTests COMMAND runVectorTests)
 
 add_executable(runMatrixTests
   matrix_constructor.cpp
+  matrix_operations.cpp
 )
 
 

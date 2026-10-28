@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "/home/rgb/Desktop/projects/LinAlg/test",
+    "cmake.sourceDirectory": "/home/rgb/Desktop/LinAlg/test",
     "files.associations": {
         "stdexcept": "cpp",
         "any": "cpp",

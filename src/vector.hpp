@@ -30,11 +30,19 @@ public:
     this->components = v;
   }
 
-  const T &operator[](size_t i) const {
-    if( i >= dimension || i < 0 ) {
+  T &operator[](size_t i) {
+    if (i >= dimension) {
       throw std::out_of_range("Index out of range\n");
     }
-    return components[i]; }
+    return components[i];
+  }
+
+  const T &operator[](size_t i) const {
+    if (i >= dimension) {
+      throw std::out_of_range("Index out of range\n");
+    }
+    return components[i];
+  }
 
   size_t getDimension() const { return dimension; }
   std::vector<T> getComponents() const { return components; }
@@ -129,41 +137,19 @@ public:
     }
     return *this;
   }
-  
+
+  // add the components of vector v to this vector object
   template <typename U>
   auto add(const VectorND<U>& v) {
-    if (dimension != v.getDimension()) {
-     throw std::invalid_argument(
-          "Dimensions Mismatch , can only add vectors of same dimension\n");
-    }
-
-    using Type = decltype(components[0] + v[0]);
-    std::vector<Type> new_comps(this->dimension);
-    
-    for (size_t i = 0; i < dimension; i++) {
-      new_comps[i] = components[i] + v[i];
-    }
-    return VectorND<Type>(new_comps);
+    return *this + v;
   }
- 
+
   // subtract the components of vector v from this vector object
   template <typename U>
   auto subtract(const VectorND<U>& v) {
-    if (dimension != v.getDimension()) {
-      throw std::invalid_argument(
-          "Dimensions Mismatch , can only subtract vectors of same dimension\n");
-    }
-
-    using Type = decltype(components[0] - v[0]);
-    std::vector<Type> new_comps(this->dimension);
-    
-    for (size_t i = 0; i < dimension; i++) {
-      new_comps[i] = components[i] - v[i];
-    }
-    return VectorND<Type>(new_comps);
+    return *this - v;
   }
-
-
+  
   // returns the dot product of this object with vector v
   template <typename U>
   double dotProduct(const VectorND<U> &v) {
@@ -174,7 +160,7 @@ public:
 
     double result = 0;
 
-    for (int i = 0; i < dimension; i++) {
+    for (size_t i = 0; i < dimension; i++) {
       result += components[i] * v[i];
     }
 
